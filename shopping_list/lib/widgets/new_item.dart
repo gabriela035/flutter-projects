@@ -21,12 +21,13 @@ class _NewItemState extends State<NewItem> {
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
 
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final url = Uri.https('first-demo-7ab45-default-rtdb.firebaseio.com',
           'shopping-list.json'); //(with what it should be connected, path/where it should be connected.json)
-      http.post(
+      final response = await http.post(
+        //storing data in database
         url,
         headers: {
           //keys are header identifiers and values are settings
@@ -41,8 +42,11 @@ class _NewItemState extends State<NewItem> {
             'category': _selectedCategory.title,
           },
         ),
-      ); //storing data in database
-      //Navigator.of(context).pop();
+      );
+
+      if (!context.mounted) {
+        return Navigator.of(context).pop();
+      }
     }
   }
 
